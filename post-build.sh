@@ -48,7 +48,7 @@ rm -rf $TARGET_DIR/boot/grub
 
 # Compile the runtime firmware operations (revert/validate/factory-reset)
 mkdir -p $TARGET_DIR/usr/share/fwup
-$HOST_DIR/usr/bin/fwup -c -f $NERVES_DEFCONFIG_DIR/fwup-ops.conf -o $TARGET_DIR/usr/share/fwup/ops.fw
+NERVES_SYSTEM=$BASE_DIR $HOST_DIR/usr/bin/fwup -c -f $NERVES_DEFCONFIG_DIR/fwup-ops.conf -o $TARGET_DIR/usr/share/fwup/ops.fw
 # Support older versions of Nerves.Runtime that look for revert.fw
 ln -sf ops.fw $TARGET_DIR/usr/share/fwup/revert.fw
 

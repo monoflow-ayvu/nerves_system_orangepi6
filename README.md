@@ -79,6 +79,34 @@ Serial console: 3-pin debug UART header, 115200 8N1, 3.3 V (do not connect 5 V).
   `grub-post-silicon-orangepi6.cfg` arg by arg; `acpi=force` and
   `efi=noruntime` are load-bearing.
 
+## QEMU smoke test (no board needed)
+
+Two-stage validation, both verified:
+
+1. **UEFI + GRUB + squashfs kernel load** — write the `.fw` to a disk image
+   (`fwup -a -d disk.img -i app.fw -t complete`), swap `/EFI/BOOT/grub.cfg` on
+   the ESP for a `console=ttyAMA0` variant (mtools `mcopy -o`), and boot with
+   EDK2 (`edk2-aarch64-code.fd` from the qemu package). GRUB prints
+   "Booting slot A..." and loads `/boot/Image` out of the squashfs.
+2. **Kernel → erlinit → BEAM → Elixir** — the vendor kernel can't fully run
+   under QEMU's ACPI tables (it probes CIX hardware), so boot the same kernel
+   binary via QEMU's device-tree path:
+
+   ```sh
+   qemu-system-aarch64 -M virt,virtualization=on -cpu cortex-a710 -smp 4 -m 2048 \
+     -kernel Image \
+     -append "console=ttyAMA0,115200 root=PARTUUID=2fa7efff-0b15-499f-ae82-82986603ca09 rootfstype=squashfs rootwait ro" \
+     -drive file=disk.img,format=raw,if=virtio \
+     -netdev user,id=n0,hostfwd=tcp::2225-:22 -device virtio-net-pci,netdev=n0 \
+     -nographic
+   ```
+
+   `virtualization=on` is required: the CIX kernel issues an SMC call at boot
+   (`reboot_reason_init`); without it QEMU has no EL2/EL3 and the SMC traps as
+   an undefined instruction. `cortex-a710` (ARMv9) is needed — `cortex-a76`
+   lacks instructions this kernel uses. Then
+   `ssh -p 2225 localhost 'System.version()'` runs Elixir on the guest.
+
 ## Provenance
 
 - Kernel: https://github.com/orangepi-xunlong/linux-orangepi branch
