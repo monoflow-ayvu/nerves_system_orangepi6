@@ -5,3 +5,5 @@
 erl_crash.dump
 .nix-mix/
 .nix-hex/
+build*.log
+docker-build.log
