@@ -3,3 +3,5 @@
 /.nerves/
 *.tar.gz
 erl_crash.dump
+.nix-mix/
+.nix-hex/

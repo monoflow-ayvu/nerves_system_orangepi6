@@ -1,8 +1,9 @@
 FROM ubuntu:22.04
 
-# Host OTP major version MUST match the target OTP built by nerves_system_br
-# (1.34.0 builds OTP 29 by default).
-ARG OTP_VERSION=29.0.2
+# Host OTP major version MUST match the target OTP built by nerves_system_br.
+# We pin the target to OTP 28 via BR2_PACKAGE_ERLANG_28=y in nerves_defconfig
+# (28.5.0.2), so the container uses OTP 28 as well.
+ARG OTP_VERSION=28.5.0.2
 ARG ELIXIR_VERSION=1.19.5
 ARG FWUP_VERSION=1.13.1
 
@@ -35,10 +36,10 @@ RUN wget -q https://github.com/erlang/otp/releases/download/OTP-${OTP_VERSION}/o
     make install && \
     cd .. && rm -rf otp_src_${OTP_VERSION} otp_src_${OTP_VERSION}.tar.gz
 
-# Elixir (precompiled for OTP 29)
-RUN wget -q https://github.com/elixir-lang/elixir/releases/download/v${ELIXIR_VERSION}/elixir-otp-29.zip && \
-    unzip -q -d /usr/local elixir-otp-29.zip && \
-    rm elixir-otp-29.zip
+# Elixir (precompiled for OTP 28)
+RUN wget -q https://github.com/elixir-lang/elixir/releases/download/v${ELIXIR_VERSION}/elixir-otp-28.zip && \
+    unzip -q -d /usr/local elixir-otp-28.zip && \
+    rm elixir-otp-28.zip
 
 # fwup (used on the host side of the build; Buildroot builds its own host-fwup
 # too, but having it in PATH helps debugging)

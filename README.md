@@ -48,9 +48,9 @@ mix deps.get
 mix compile    # builds the whole Buildroot system inside the container
 ```
 
-Note: your **host** Erlang/OTP major version must match the target's (OTP 29
-for nerves_system_br 1.34.0) when building Nerves *applications* against this
-system.
+Note: your **host** Erlang/OTP major version must match the target's (OTP 28,
+pinned via `BR2_PACKAGE_ERLANG_28=y`) when building Nerves *applications*
+against this system. `shell.nix` provides a matching host environment.
 
 ## Using
 
