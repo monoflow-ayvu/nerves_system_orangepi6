@@ -1,0 +1,5 @@
+config BR2_PACKAGE_CIX_AUDIO_DSP
+	bool "cix-audio-dsp"
+	depends on BR2_aarch64
+	help
+	  CIX audio DSP firmware + offload codecs (proprietary CIX runtime blob, install-only).

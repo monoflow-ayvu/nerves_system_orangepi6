@@ -1,0 +1,8 @@
+config BR2_PACKAGE_CIX_GSTREAMER
+	bool "cix-gstreamer"
+	depends on BR2_aarch64
+	depends on BR2_PACKAGE_GSTREAMER1
+	help
+	  CIX hardware-accelerated GStreamer plugins (V4L2 M2M VPU decode,
+	  KMS/VA sinks, cixsr super-resolution). Proprietary CIX runtime blob,
+	  install-only.

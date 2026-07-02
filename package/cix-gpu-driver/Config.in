@@ -1,0 +1,9 @@
+config BR2_PACKAGE_CIX_GPU_DRIVER
+	bool "cix-gpu-driver"
+	depends on BR2_LINUX_KERNEL
+	depends on BR2_aarch64
+	help
+	  Out-of-tree ARM Mali "sky1" GPU kernel driver for the CIX P1
+	  (Immortalis-G720): mali_kbase.ko + memory_group_manager.ko +
+	  protected_memory_allocator.ko. Built against the configured
+	  Linux kernel. Pair with the cix-gpu-umd userspace package.

@@ -1,0 +1,14 @@
+config BR2_PACKAGE_CIX_GPU_UMD
+	bool "cix-gpu-umd"
+	depends on BR2_aarch64
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  Proprietary ARM Mali "libmali" userspace for the CIX P1
+	  Immortalis-G720 (EGL / OpenGL ES / GBM / OpenCL / Vulkan) plus the
+	  mali_csffw.bin GPU firmware. Runtime install under /opt/cixgpu-pro
+	  (on the linker path via ld.so.conf.d). Pair with cix-gpu-driver.
+
+	  NOTE: build-time EGL/GLES/GBM provider wiring (glvnd + dev headers
+	  + pkg-config, so weston/cog/flutter link against libmali) is added
+	  in a later milestone; this package only installs the runtime libs.

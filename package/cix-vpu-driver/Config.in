@@ -1,0 +1,10 @@
+config BR2_PACKAGE_CIX_VPU_DRIVER
+	bool "cix-vpu-driver"
+	depends on BR2_LINUX_KERNEL
+	depends on BR2_aarch64
+	select BR2_PACKAGE_HOST_SCONS
+	help
+	  Out-of-tree ARM Linlon-V8 (MVE) VPU kernel driver for the CIX P1:
+	  amvx.ko, a V4L2 M2M video decoder/encoder. Built with scons
+	  against the configured Linux kernel. Pair with cix-vpu-firmware
+	  and cix-gstreamer.

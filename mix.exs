@@ -103,6 +103,8 @@ defmodule NervesSystemOrangepi6.MixProject do
     [
       "fwup_include",
       "rootfs_overlay",
+      "package",
+      "blobs",
       "CHANGELOG.md",
       "Config.in",
       "Dockerfile",

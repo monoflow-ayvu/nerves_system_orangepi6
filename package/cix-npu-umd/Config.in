@@ -1,0 +1,5 @@
+config BR2_PACKAGE_CIX_NPU_UMD
+	bool "cix-npu-umd"
+	depends on BR2_aarch64
+	help
+	  ArmChina AIPU NPU userspace (libaipudrv) (proprietary CIX runtime blob, install-only).

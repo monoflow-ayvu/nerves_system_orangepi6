@@ -1,4 +1,18 @@
-# Add project-specific packages for Buildroot here
-#
-# If these are non-proprietary, please consider contributing them back to
-# Nerves or Buildroot.
+# Project-specific packages for the Orange Pi 6 (CIX P1) Nerves system.
+
+menu "CIX P1 accelerator stack"
+
+comment "Out-of-tree kernel modules (built against the configured kernel)"
+source "$NERVES_DEFCONFIG_DIR/package/cix-gpu-driver/Config.in"
+source "$NERVES_DEFCONFIG_DIR/package/cix-npu-driver/Config.in"
+source "$NERVES_DEFCONFIG_DIR/package/cix-vpu-driver/Config.in"
+
+comment "Proprietary userspace runtime blobs"
+source "$NERVES_DEFCONFIG_DIR/package/cix-gpu-umd/Config.in"
+source "$NERVES_DEFCONFIG_DIR/package/cix-npu-umd/Config.in"
+source "$NERVES_DEFCONFIG_DIR/package/cix-noe-umd/Config.in"
+source "$NERVES_DEFCONFIG_DIR/package/cix-vpu-firmware/Config.in"
+source "$NERVES_DEFCONFIG_DIR/package/cix-gstreamer/Config.in"
+source "$NERVES_DEFCONFIG_DIR/package/cix-audio-dsp/Config.in"
+
+endmenu

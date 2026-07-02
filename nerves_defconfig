@@ -20,6 +20,9 @@ BR2_ROOTFS_SKELETON_CUSTOM=y
 BR2_ROOTFS_SKELETON_CUSTOM_PATH="${BR2_EXTERNAL_NERVES_PATH}/board/nerves-common/skeleton"
 BR2_INIT_NONE=y
 BR2_ROOTFS_DEVICE_TABLE="${BR2_EXTERNAL_NERVES_PATH}/board/nerves-common/device_table.txt"
+# Dynamic /dev via eudev (udev) — required by libinput/weston/cog and started
+# by rootfs_overlay/usr/sbin/cix-coldplug.sh (BR2_INIT_NONE has no init).
+BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV=y
 BR2_ENABLE_LOCALE_WHITELIST="locale-archive"
 BR2_GENERATE_LOCALE="en_US.UTF-8"
 BR2_ROOTFS_OVERLAY="${BR2_EXTERNAL_NERVES_PATH}/board/nerves-common/rootfs_overlay ${NERVES_DEFCONFIG_DIR}/rootfs_overlay"
@@ -49,6 +52,18 @@ BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI="boot linux ext2 fat squash4 part_gpt part_
 BR2_PACKAGE_HOST_DOSFSTOOLS=y
 BR2_NERVES_SYSTEM_NAME="nerves_system_orangepi6"
 BR2_NERVES_ADDITIONAL_IMAGE_FILES="${NERVES_DEFCONFIG_DIR}/fwup.conf"
+
+# --- CIX P1 accelerator stack (Milestone 1: kernel modules + runtime blobs) ---
+# Out-of-tree kernel modules built against the configured kernel.
+BR2_PACKAGE_CIX_GPU_DRIVER=y
+BR2_PACKAGE_CIX_NPU_DRIVER=y
+BR2_PACKAGE_CIX_VPU_DRIVER=y
+# Proprietary userspace runtime blobs.
+BR2_PACKAGE_CIX_GPU_UMD=y
+BR2_PACKAGE_CIX_NPU_UMD=y
+BR2_PACKAGE_CIX_NOE_UMD=y
+BR2_PACKAGE_CIX_VPU_FIRMWARE=y
+BR2_PACKAGE_CIX_AUDIO_DSP=y
 BR2_PACKAGE_NBTTY=y
 BR2_PACKAGE_ERLANG_28=y
 BR2_PACKAGE_NERVES_CONFIG=y

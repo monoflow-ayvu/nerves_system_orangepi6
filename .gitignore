@@ -7,3 +7,5 @@ erl_crash.dump
 .nix-hex/
 build*.log
 docker-build.log
+build-cam*.log
+archive.log

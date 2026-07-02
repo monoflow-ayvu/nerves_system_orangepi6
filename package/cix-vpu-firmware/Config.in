@@ -1,0 +1,5 @@
+config BR2_PACKAGE_CIX_VPU_FIRMWARE
+	bool "cix-vpu-firmware"
+	depends on BR2_aarch64
+	help
+	  CIX Linlon-V8 VPU codec firmware (.fwb) (proprietary CIX runtime blob, install-only).

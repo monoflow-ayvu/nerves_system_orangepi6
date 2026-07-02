@@ -1,0 +1,7 @@
+config BR2_PACKAGE_CIX_NOE_UMD
+	bool "cix-noe-umd"
+	depends on BR2_aarch64
+	select BR2_PACKAGE_CIX_NPU_UMD
+	help
+	  CIX NOE NPU runtime (libnoe) — high-level inference API on top of
+	  the AIPU userspace driver. Proprietary CIX runtime blob, install-only.

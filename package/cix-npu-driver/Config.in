@@ -1,0 +1,8 @@
+config BR2_PACKAGE_CIX_NPU_DRIVER
+	bool "cix-npu-driver"
+	depends on BR2_LINUX_KERNEL
+	depends on BR2_aarch64
+	help
+	  Out-of-tree ArmChina Zhouyi V3 NPU (AIPU) kernel driver for the
+	  CIX P1: aipu.ko (device node /dev/aipu). Built against the
+	  configured Linux kernel. Pair with cix-npu-umd / cix-noe-umd.
