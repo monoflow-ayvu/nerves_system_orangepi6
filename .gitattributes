@@ -1,0 +1,2 @@
+# Vendored proprietary CIX blobs are large binaries — track with git-LFS.
+blobs/** filter=lfs diff=lfs merge=lfs -text
