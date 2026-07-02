@@ -1,0 +1,124 @@
+name: CI
+
+on: [push]
+
+env:
+  OTP_VERSION: "28.x"
+  ELIXIR_VERSION: "1.19.5-otp-28"
+  BUILDER_IMAGE: fermuch/nerves-orangepi6-builder:latest
+
+permissions:
+  contents: read
+
+jobs:
+  build-system:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: true
+          swap-storage: true
+
+      # needed for the docker nerves build runner
+      - run: mkdir -p /home/runner/.ssh
+
+      - uses: actions/checkout@v4
+
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.OTP_VERSION }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+
+      - name: Install nerves_bootstrap
+        run: |
+          mix local.hex --force
+          mix local.rebar --force
+          mix archive.install hex nerves_bootstrap --force
+
+      # Pre-build the build-runner image so the Nerves Docker runner finds it
+      # (it prompts interactively when the image is missing). GHA layer cache
+      # keeps this fast after the first run.
+      - uses: docker/setup-buildx-action@v3
+      - name: Build runner image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          tags: ${{ env.BUILDER_IMAGE }}
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Cache Buildroot downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.nerves/dl
+            ~/.local/share/nerves/dl
+          key: nerves-dl-${{ hashFiles('nerves_defconfig') }}
+          restore-keys: nerves-dl-
+
+      - run: mix deps.get
+
+      # Informational only: the linter insists on wpa_supplicant, which this
+      # system intentionally omits (no WiFi in the minimal image).
+      - name: Lint
+        run: mix nerves.system.lint nerves_defconfig
+        continue-on-error: true
+
+      - name: Build
+        run: mix compile
+
+      - name: Did I really build
+        run: |
+          [ -d .nerves ] || (echo "VERSION file needs to be bumped or a config file needs to change to force a build"; exit 1)
+
+      - name: Create artifact
+        run: |
+          mkdir -p deploy/artifacts
+          cp ./CHANGELOG.md deploy/CHANGELOG.md
+          mix nerves.artifact nerves_system_orangepi6 --path deploy/artifacts
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: deploy/artifacts
+          name: system
+
+      - name: Save deploy cache
+        uses: actions/cache/save@v4
+        with:
+          path: deploy
+          key: deploy-${{ github.sha }}-${{ github.ref_name }}
+
+  deploy-system:
+    needs: [build-system]
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore deploy cache
+        uses: actions/cache/restore@v4
+        with:
+          path: deploy
+          key: deploy-${{ github.sha }}-${{ github.ref_name }}
+          fail-on-cache-miss: true
+
+      - name: Create release and upload artifact
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ github.ref_name }} \
+            --repo ${{ github.repository }} \
+            --title ${{ github.ref_name }} \
+            --notes-file deploy/CHANGELOG.md || true
+          gh release upload ${{ github.ref_name }} deploy/artifacts/* \
+            --repo ${{ github.repository }} --clobber

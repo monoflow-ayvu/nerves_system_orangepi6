@@ -3,6 +3,12 @@
 Custom [Nerves](https://nerves-project.org/) system for the
 [Orange Pi 6](http://www.orangepi.org/) (CIX P1 / CD8180 "sky1", 12-core ARM64).
 
+Also boots the **Orange Pi 6 Plus** unchanged: both boards share the SoC, the
+kernel and the boot mechanism, and with ACPI boot the board-specific hardware
+description comes from each board's own on-board UEFI firmware — not from this
+image. Declare both targets in your app:
+`targets: [:orangepi6, :orangepi6plus]`.
+
 | Feature        | Description                                              |
 | -------------- | -------------------------------------------------------- |
 | CPU            | CIX P1 (4×A720 + 4×A720 + 4×A520, ARMv9.2)               |
