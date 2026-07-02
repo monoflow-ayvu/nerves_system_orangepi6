@@ -39,11 +39,13 @@ BR2_PACKAGE_LINUX_FIRMWARE_RTL_8169=y
 BR2_PACKAGE_LIBMNL=y
 BR2_PACKAGE_LIBNL=y
 BR2_PACKAGE_E2FSPROGS=y
+BR2_PACKAGE_GPTFDISK=y
+BR2_PACKAGE_GPTFDISK_SGDISK=y
 # BR2_PACKAGE_E2FSPROGS_FSCK is not set
 BR2_PACKAGE_CA_CERTIFICATES=y
 # BR2_TARGET_ROOTFS_TAR is not set
 BR2_TARGET_GRUB2=y
-BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI="boot linux ext2 fat squash4 part_gpt part_msdos normal efi_gop loadenv echo test true search configfile regexp"
+BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI="boot linux ext2 fat squash4 part_gpt part_msdos normal efi_gop loadenv echo test true search configfile regexp probe"
 BR2_PACKAGE_HOST_DOSFSTOOLS=y
 BR2_NERVES_SYSTEM_NAME="nerves_system_orangepi6"
 BR2_NERVES_ADDITIONAL_IMAGE_FILES="${NERVES_DEFCONFIG_DIR}/fwup.conf"

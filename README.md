@@ -7,7 +7,7 @@ Custom [Nerves](https://nerves-project.org/) system for the
 | -------------- | -------------------------------------------------------- |
 | CPU            | CIX P1 (4×A720 + 4×A720 + 4×A520, ARMv9.2)               |
 | Memory         | up to 64 GB LPDDR5                                       |
-| Storage        | microSD (primary target), NVMe, eMMC                     |
+| Storage        | microSD and M.2 NVMe (same image; may coexist), eMMC     |
 | Linux kernel   | 6.6.89 (orangepi-xunlong `orange-pi-6.6-cix`, ACPI boot) |
 | IEx terminal   | debug UART `ttyAMA2`, 115200 8N1                         |
 | Ethernet       | yes (in-tree `r8169`/`macb`/`igb`, no firmware needed)   |
@@ -78,6 +78,32 @@ Serial console: 3-pin debug UART header, 115200 8N1, 3.3 V (do not connect 5 V).
   where. Diff the cmdline against the vendor image's
   `grub-post-silicon-orangepi6.cfg` arg by arg; `acpi=force` and
   `efi=noruntime` are load-bearing.
+
+## Boot media: microSD and M.2 NVMe
+
+The same `.fw` boots from either medium. GRUB probes the PARTUUID of the
+disk it was loaded from (`probe --part-uuid`), so the kernel and rootfs
+always come from the disk the UEFI boot order selected — device names and
+partition GUIDs are never hardcoded in the boot path.
+
+- **First medium** (usually the microSD): `mix burn` as usual.
+- **Additional media** (e.g. the M.2): burn with *fresh partition GUIDs* so
+  `root=PARTUUID` stays unambiguous when both disks are installed:
+
+  ```sh
+  # host, M.2 in a USB adapter:
+  sudo ./install-to-disk.sh app.fw /dev/sdX
+  # or from the running device booted off the SD:
+  ./install-to-disk.sh /data/app.fw /dev/nvme0n1
+  ```
+
+- Pick which medium boots in the UEFI setup (boot order). Each medium keeps
+  its own independent A/B state and KV store, so the SD works as a
+  recovery/installer medium alongside the NVMe.
+
+Do **not** write the plain `.fw` to two media of the same machine without
+the script — duplicated PARTUUIDs make the kernel's root selection
+ambiguous.
 
 ## QEMU smoke test (no board needed)
 

@@ -110,6 +110,7 @@ defmodule NervesSystemOrangepi6.MixProject do
       "fwup-ops.conf",
       "fwup.conf",
       "grub.cfg",
+      "install-to-disk.sh",
       "linux-6.6-cix.config",
       "mix.exs",
       "nerves_defconfig",
