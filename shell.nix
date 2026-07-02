@@ -9,6 +9,7 @@ let
   basePackages = [
     elixir
     otp.erlang
+    otp.elixir-ls
 
     # build deps for nerves
     pkg-config
@@ -16,6 +17,12 @@ let
     squashfsTools
     gnumake
     gcc
+
+    # image tooling: install-to-disk.sh (sgdisk), ESP inspection (mtools)
+    gptfdisk
+    mtools
+
+    # for QEMU smoke tests (see README) run: nix-shell -p qemu
   ];
   PROJECT_ROOT = builtins.toString ./.;
 
