@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.0
+
+* Install the CIX NPU userspace (`cix-npu-umd` / `cix-noe-umd`) into the Buildroot
+  **staging** sysroot as well as the target, so out-of-tree NIFs (e.g. the
+  `cix_p1_tpu` Elixir library) can cross-link against `-lnoe`/`-laipudrv` and
+  `#include` the NOE/AIPU headers at firmware build time.
+
 ## v0.1.0
 
 Initial version.
