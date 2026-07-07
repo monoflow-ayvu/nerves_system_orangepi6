@@ -18,6 +18,10 @@ if [ -x /sbin/udevd ] || [ -x /usr/sbin/udevd ]; then
     udevadm settle --timeout=10 2>/dev/null || true
 fi
 
+# 1b. Wayland/weston runtime dir (XDG_RUNTIME_DIR in erlinit.config).
+mkdir -p /run/xdg
+chmod 0700 /run/xdg
+
 # 2. Display pipeline (in-tree CIX DRM is built-in; DPU/DP-TX/panel are modules
 #    with ACPI HIDs — load them so /dev/dri/card0 appears).
 for m in linlondp trilin_dpsub cix_edp_panel; do

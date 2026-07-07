@@ -4,3 +4,5 @@ export GST_PLUGIN_PATH_1_0="/usr/share/cix/lib/gstreamer-1.0:/usr/lib/gstreamer-
 # Prefer GLES on the Mali stack for GTK/GDK/GStreamer GL consumers.
 export GDK_GL=gles
 export GST_GL_API=gles2
+# Wayland/weston runtime dir (created 0700 by cix-coldplug.sh).
+export XDG_RUNTIME_DIR=/run/xdg

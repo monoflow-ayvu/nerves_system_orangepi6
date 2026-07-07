@@ -11,8 +11,18 @@ CIX_GSTREAMER_LICENSE = PROPRIETARY
 CIX_GSTREAMER_REDISTRIBUTE = NO
 CIX_GSTREAMER_INSTALL_STAGING = NO
 
+# Install only the plugin .so files. The blob's private gstreamer 1.22
+# core libs (libgstgl/libgstvideo) must NOT ship: /usr/share/cix/lib is
+# first on LD_LIBRARY_PATH and they would shadow the system's 1.24 libs.
+# The plugins' DT_NEEDED resolve against the system 1.24 libs instead
+# (gst plugin ABI is backward compatible). gtk/opengl plugins need
+# X11/GLX which this system doesn't have — dropped.
 define CIX_GSTREAMER_INSTALL_TARGET_CMDS
-	cp -a $(@D)/usr $(TARGET_DIR)/
+	mkdir -p $(TARGET_DIR)/usr/share/cix/lib/gstreamer-1.0
+	cp -a $(@D)/usr/share/cix/lib/gstreamer-1.0/*.so \
+		$(TARGET_DIR)/usr/share/cix/lib/gstreamer-1.0/
+	rm -f $(TARGET_DIR)/usr/share/cix/lib/gstreamer-1.0/libgstgtk.so \
+		$(TARGET_DIR)/usr/share/cix/lib/gstreamer-1.0/libgstopengl.so
 endef
 
 $(eval $(generic-package))

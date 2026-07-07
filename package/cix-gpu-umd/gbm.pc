@@ -1,0 +1,9 @@
+prefix=/usr
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: gbm
+Description: Mesa gbm library (CIX libmali implementation)
+Version: 21.3.0
+Libs: -L${libdir} -lgbm
+Cflags: -I${includedir}

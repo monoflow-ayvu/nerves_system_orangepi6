@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.4.0
+
+* **Display/GPU stack (M2).** `cix-gpu-umd` is now a real Buildroot GL
+  provider: libglvnd supplies the linkable `libEGL`/`libGLESv2` (dispatching
+  to the `libEGL_cix` ICD at runtime) and the package provides the `libgbm`
+  virtual package (mesa `gbm.h` + `gbm.pc` staged against the blob's
+  full-featured libgbm). GL/GBM libs get `/usr/lib` symlinks, so no
+  `LD_LIBRARY_PATH` is needed for the GPU stack. Adds `weston` (DRM backend,
+  desktop + kiosk shells, demo clients) and `kmscube`;
+  `XDG_RUNTIME_DIR=/run/xdg` created by `cix-coldplug.sh`.
+* **Multimedia.** GStreamer 1.24 (tools + base/good/bad plugins: ALSA, v4l2
+  + v4l2codecs, kmssink, waylandsink, GL/GLES-EGL-wayland, mp4/matroska/
+  mpegts, RTP/RTSP) and gst1-libav + `ffmpeg`/`ffprobe` (GPL) for
+  conversion. `cix-gstreamer` blob plugins enabled (V4L2 M2M VPU decode,
+  cixsr super-resolution, fdkaac, kms/va sinks); the blob's private
+  GStreamer 1.22 core-lib copies and the X11-only gtk/opengl plugins are no
+  longer installed so they can't shadow the system 1.24 libs.
+* **Audio.** `alsa-lib` + `alsa-utils` (aplay, amixer, alsamixer, alsactl,
+  alsaucm, speaker-test). Kernel SND/SOF-CIX/HDA/USB-audio support was
+  already present; DSP firmware + offload codecs ship via `cix-audio-dsp`.
+* **Webcams.** libv4l + `v4l2-ctl` (uvcvideo was already in-kernel);
+  GStreamer `v4l2src` enabled with probing.
+* **WiFi.** rtw88/rtw89 firmware (stock RTL8852BE M.2 module included),
+  `wpa_supplicant` (nl80211, AP mode, WPA3, WPS, EAP) for
+  `vintage_net_wifi`, `iw`, `wireless-regdb`.
+* **Bluetooth.** Realtek 88xx BT firmware for `btusb` + BlueZ
+  (`bluetoothctl`, monitor, tools). `bluetoothd` requires starting
+  `dbus-daemon --system` from the application.
+
 ## v0.3.0
 
 * **Boot-once A/B auto-rollback.** Upgrades arm grubenv with `validated=0`;

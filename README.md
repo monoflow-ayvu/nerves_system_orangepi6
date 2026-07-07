@@ -17,7 +17,11 @@ image. Declare both targets in your app:
 | Linux kernel   | 6.6.89 (orangepi-xunlong `orange-pi-6.6-cix`, ACPI boot) |
 | IEx terminal   | debug UART `ttyAMA2`, 115200 8N1                         |
 | Ethernet       | yes (in-tree `r8169`/`macb`/`igb`, no firmware needed)   |
-| WiFi/BT        | not included (minimal system)                            |
+| WiFi           | yes (rtw88/rtw89 firmware for the stock RTL8852BE M.2 module; wpa_supplicant/iw ready for `vintage_net_wifi`) |
+| Bluetooth      | yes (`btusb` + Realtek firmware, BlueZ `bluetoothctl`; start `dbus-daemon` + `bluetoothd` from your app) |
+| Display / GPU  | weston (DRM backend, desktop + kiosk shells) on the proprietary Mali G720 stack (libglvnd → libEGL_cix), `kmscube` test |
+| Multimedia     | GStreamer 1.24 (+ CIX V4L2 M2M VPU plugins, kmssink/waylandsink/GL), `ffmpeg`/`ffprobe` CLI |
+| Audio          | ALSA (`alsa-lib`/`alsa-utils`), CIX audio DSP firmware + offload codecs, USB/HDMI audio |
 
 ## Boot architecture
 
@@ -81,6 +85,37 @@ In your Nerves project's `mix.exs`:
 Then `MIX_TARGET=orangepi6 mix firmware && mix firmware.burn`.
 
 Serial console: 3-pin debug UART header, 115200 8N1, 3.3 V (do not connect 5 V).
+
+## Multimedia, display, audio, WiFi/BT
+
+- **Display / GPU**: `weston` (DRM backend) renders through the proprietary
+  Mali stack — apps link the neutral `libEGL`/`libGLESv2` (libglvnd), which
+  dispatches to `libEGL_cix`/`libmali` via
+  `/usr/share/glvnd/egl_vendor.d/40_cix.json`. `XDG_RUNTIME_DIR=/run/xdg` is
+  pre-set; start weston from your app, e.g.
+  `System.cmd("weston", ["--shell=kiosk-shell.so"])`. `kmscube` and the
+  `weston-simple-egl` demo clients are included as GPU sanity tests.
+- **Video**: GStreamer 1.24 with the CIX plugins in
+  `/usr/share/cix/lib/gstreamer-1.0` (on `GST_PLUGIN_PATH_1_0`): V4L2 M2M VPU
+  decode (`amvx`), `kmssink`, `waylandsink`, GL upload. `gst-launch-1.0` /
+  `gst-inspect-1.0` are installed; `ffmpeg`/`ffprobe` handle offline
+  conversion (software codecs via gst1-libav/ffmpeg as fallback).
+- **Webcams**: UVC (`uvcvideo`, auto-loaded) plus `v4l2-ctl`/libv4l;
+  capture with GStreamer `v4l2src` (MJPEG decode via jpegdec, mics via
+  `snd-usb-audio`). MIPI-CSI sensor drivers (IMX219/OV5640/…) are also
+  enabled as modules.
+- **Audio**: ALSA (`aplay`, `amixer`, `alsamixer`, `speaker-test`, UCM). The
+  CIX audio DSP firmware (`/lib/firmware/dsp_fw.bin`) and offload codecs ship
+  in the image; USB and HDMI/DP audio also work (`snd-usb-audio`, HDA).
+- **WiFi**: the stock M.2 module (RTL8852BE) uses `rtw89_8852be`
+  (auto-loaded via udev) with firmware included; rtw88-family modules are
+  also covered. Use [`vintage_net_wifi`](https://hex.pm/packages/vintage_net_wifi)
+  — `wpa_supplicant` (nl80211, AP mode, WPA3), `iw` and the regulatory db are
+  in the image.
+- **Bluetooth**: RTL8852BE BT enumerates over USB (`btusb` + Realtek
+  firmware). BlueZ is included (`bluetoothctl`, `hciconfig`); `bluetoothd`
+  needs D-Bus, so start `dbus-daemon --system` then `bluetoothd` from your
+  app (or use an HCI-level Elixir stack).
 
 ## Bring-up fallbacks
 

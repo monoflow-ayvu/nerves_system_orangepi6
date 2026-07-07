@@ -2,7 +2,19 @@ config BR2_PACKAGE_CIX_GSTREAMER
 	bool "cix-gstreamer"
 	depends on BR2_aarch64
 	depends on BR2_PACKAGE_GSTREAMER1
+	depends on BR2_PACKAGE_GST1_PLUGINS_BASE
+	# Runtime DT_NEEDED of the installed blob plugins:
+	#  fdkaac -> libfdk-aac.so.2, kms -> libdrm.so.2,
+	#  va -> libva.so.2 + libgudev-1.0.so.0, cixsr -> libnoe.so
+	select BR2_PACKAGE_FDK_AAC
+	select BR2_PACKAGE_LIBDRM
+	select BR2_PACKAGE_LIBVA
+	select BR2_PACKAGE_LIBGUDEV
+	select BR2_PACKAGE_CIX_NOE_UMD
 	help
 	  CIX hardware-accelerated GStreamer plugins (V4L2 M2M VPU decode,
 	  KMS/VA sinks, cixsr super-resolution). Proprietary CIX runtime blob,
-	  install-only.
+	  install-only. Built against GStreamer 1.22; runs on the system's
+	  1.24 libs (plugin ABI is backward compatible). The X11-only blob
+	  plugins (gtk, opengl) and the blob's private 1.22 copies of
+	  libgstgl/libgstvideo are not installed.

@@ -69,8 +69,7 @@ jobs:
 
       - run: mix deps.get
 
-      # Informational only: the linter insists on wpa_supplicant, which this
-      # system intentionally omits (no WiFi in the minimal image).
+      # Informational only.
       - name: Lint
         run: mix nerves.system.lint nerves_defconfig
         continue-on-error: true
