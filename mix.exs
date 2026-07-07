@@ -2,7 +2,7 @@ defmodule NervesSystemOrangepi6.MixProject do
   use Mix.Project
 
   @app :nerves_system_orangepi6
-  @source_url "https://github.com/fermuch/nerves_system_orangepi6"
+  @source_url "https://github.com/monoflow-ayvu/nerves_system_orangepi6"
   @version Path.join(__DIR__, "VERSION")
            |> File.read!()
            |> String.trim()
@@ -40,7 +40,7 @@ defmodule NervesSystemOrangepi6.MixProject do
     [
       type: :system,
       artifact_sites: [
-        {:github_releases, "fermuch/#{@app}"}
+        {:github_releases, "monoflow-ayvu/#{@app}"}
       ],
       build_runner: Nerves.Artifact.BuildRunners.Docker,
       build_runner_config: [

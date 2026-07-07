@@ -33,16 +33,28 @@ tree, no initrd.
 GPT disk layout (fixed partition GUIDs, so root=PARTUUID=... is stable):
   LBA 64      raw u-boot-env block (Nerves.Runtime KV store, no U-Boot involved)
   p1  boot    FAT ESP, 32 MiB: BOOTAA64.EFI, grub.cfg, grubenv
-  p2  rootfs.a  squashfs, 1 GiB (kernel inside at /boot/Image)
-  p3  rootfs.b  squashfs, 1 GiB
+  p2  rootfs.a  squashfs, 3 GiB (kernel inside at /boot/Image)
+  p3  rootfs.b  squashfs, 3 GiB
   p4  app     ext4, expands to fill the disk, mounted at /root
 ```
 
-A/B updates follow the `nerves_system_x86_64` model: fwup writes the new
-rootfs, then flips `nerves_fw_active` in the uboot-env block and the `boot`
-variable in grubenv (written last, so an aborted update never points GRUB at
-a half-written slot). On-device revert/validate/status live in
-`/usr/share/fwup/ops.fw`.
+A/B updates: fwup writes the new rootfs, then flips `nerves_fw_active` in
+the uboot-env block and the `boot` variable in grubenv (written last, so an
+aborted update never points GRUB at a half-written slot). On-device
+revert/validate/status live in `/usr/share/fwup/ops.fw`.
+
+**Boot-once auto-rollback**: an upgrade arms grubenv with `validated=0`.
+The new slot gets exactly one boot to call
+`Nerves.Runtime.validate_firmware/0`; if the device reboots without
+validating (kernel panic — `panic=10` on the cmdline — erlinit reboot,
+watchdog, power cycle), GRUB falls back to the previous slot and
+`cix-coldplug.sh` re-aligns `nerves_fw_active` in the Nerves KV store with
+the slot that actually booted. **Your application must call
+`Nerves.Runtime.validate_firmware/0` once it considers itself healthy**
+(e.g. after NervesHub connects or your own checks pass), or every firmware
+update will be rolled back on the next reboot. Fresh installs (`complete`)
+and manual `revert`s land on a pre-validated slot and are not subject to
+rollback.
 
 ## Building
 

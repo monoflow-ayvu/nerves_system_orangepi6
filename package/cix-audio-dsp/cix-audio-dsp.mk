@@ -13,6 +13,11 @@ CIX_AUDIO_DSP_INSTALL_STAGING = NO
 
 define CIX_AUDIO_DSP_INSTALL_TARGET_CMDS
 	cp -a $(@D)/usr $(TARGET_DIR)/
+	# The kernel's request_firmware() only searches /lib/firmware; Buildroot
+	# has no merged /usr, so relocate the DSP firmware there.
+	mkdir -p $(TARGET_DIR)/lib/firmware
+	mv $(TARGET_DIR)/usr/lib/firmware/dsp_fw.bin $(TARGET_DIR)/lib/firmware/dsp_fw.bin
+	rmdir --ignore-fail-on-non-empty $(TARGET_DIR)/usr/lib/firmware
 endef
 
 $(eval $(generic-package))

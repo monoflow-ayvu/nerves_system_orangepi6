@@ -28,7 +28,11 @@ jobs:
       # needed for the docker nerves build runner
       - run: mkdir -p /home/runner/.ssh
 
+      # lfs is required: blobs/ (CIX GPU/NPU/VPU/audio runtime libraries and
+      # firmware) is git-LFS; without it the build copies pointer stubs.
       - uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - uses: erlef/setup-beam@v1
         with:

@@ -33,4 +33,11 @@ done
 modprobe aipu 2>/dev/null || true
 modprobe amvx 2>/dev/null || true
 
+# 5. A/B bookkeeping: if GRUB's boot-once rollback fell back to the other
+#    slot, grubenv already points at the good slot but the Nerves KV store
+#    still names the failed one. Realign it before the BEAM reads it.
+if [ -f /usr/share/fwup/ops.fw ] && [ -b /dev/rootdisk0 -o -L /dev/rootdisk0 ]; then
+    fwup -t reconcile -d /dev/rootdisk0 -q -U /usr/share/fwup/ops.fw || true
+fi
+
 exit 0

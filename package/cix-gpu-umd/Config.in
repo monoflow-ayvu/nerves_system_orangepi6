@@ -3,6 +3,11 @@ config BR2_PACKAGE_CIX_GPU_UMD
 	depends on BR2_aarch64
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS # wayland
+	# libmali.so DT_NEEDEDs libdrm.so.2, libwayland-client.so.0 and
+	# libwayland-server.so.0 — without these the blob fails to dlopen.
+	select BR2_PACKAGE_LIBDRM
+	select BR2_PACKAGE_WAYLAND
 	help
 	  Proprietary ARM Mali "libmali" userspace for the CIX P1
 	  Immortalis-G720 (EGL / OpenGL ES / GBM / OpenCL / Vulkan) plus the

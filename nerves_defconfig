@@ -58,7 +58,10 @@ BR2_NERVES_ADDITIONAL_IMAGE_FILES="${NERVES_DEFCONFIG_DIR}/fwup.conf"
 BR2_PACKAGE_CIX_GPU_DRIVER=y
 BR2_PACKAGE_CIX_NPU_DRIVER=y
 BR2_PACKAGE_CIX_VPU_DRIVER=y
-# Proprietary userspace runtime blobs.
+# Proprietary userspace runtime blobs. libmali requires libdrm + wayland
+# at runtime (DT_NEEDED); cix-gpu-umd also selects them.
+BR2_PACKAGE_LIBDRM=y
+BR2_PACKAGE_WAYLAND=y
 BR2_PACKAGE_CIX_GPU_UMD=y
 BR2_PACKAGE_CIX_NPU_UMD=y
 BR2_PACKAGE_CIX_NOE_UMD=y
