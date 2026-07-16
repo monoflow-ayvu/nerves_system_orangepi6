@@ -48,7 +48,7 @@ jobs:
       # Pre-build the build-runner image so the Nerves Docker runner finds it
       # (it prompts interactively when the image is missing). GHA layer cache
       # keeps this fast after the first run.
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
       - name: Build runner image
         uses: docker/build-push-action@v6
         with:
