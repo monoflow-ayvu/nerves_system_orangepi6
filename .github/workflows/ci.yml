@@ -30,7 +30,7 @@ jobs:
 
       # lfs is required: blobs/ (CIX GPU/NPU/VPU/audio runtime libraries and
       # firmware) is git-LFS; without it the build copies pointer stubs.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           lfs: true
 
@@ -106,7 +106,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Restore deploy cache
         uses: actions/cache/restore@v4
